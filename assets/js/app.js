@@ -1,8 +1,10 @@
 'use strict';
 
-const fieldChecks = {
-  text: ['id', 'name', 'maxlength'],
-  number: ['id', 'name', 'min', 'max'],
+const fieldConfigOptions = {
+  input: {
+    text: ['id', 'name', 'maxlength'],
+    number: ['id', 'name', 'min', 'max']
+  },
   textarea: ['id', 'name', 'maxlength']
 }; 
 
@@ -30,25 +32,57 @@ function checkTextaraField(options) {
   console.log('3', options.textarea);
 }
 
-function checkFields(options) {
-  const rules = {
-    text: checkTextField,
-    number: checkNumberField,
-    textarea: checkTextaraField
-  };
-  const inputs = document.querySelectorAll('input');
-  const textarea = document.querySelectorAll('textarea');
 
-  const fields = [...inputs, ...textarea];
 
-  console.log('>', fields.length); // 6
 
-  for (let i = 0; i < fields.length; i++) {
-    const field = fields[i];
-    console.log(field.type);
-    rules[fields[i].type](field, options);
-  }
+function getInputs(types) {
+  const inputTypes = Object.keys(types);
+  const inputs = [...document.querySelectorAll('input')].filter(item=>{
+    return inputTypes.includes(item.type);
+  });
+  return inputs;
 }
 
 
-checkFields(fieldChecks);
+
+
+
+function getElements(list) {
+  const elements = Object.keys(list);
+  let myElements = [];
+  for (let i = 0; i < elements.length; i++) {
+    const element = elements[i];
+    const domEls = (element === "input") ? getInputs(list.input) : document.querySelectorAll(element);
+    
+    myElements = [...myElements, ...domEls];
+  }
+
+  return myElements;
+}
+
+
+
+
+
+function checkFields(options) {
+  const rules = {
+    input: {
+      text: checkTextField,
+      number: checkNumberField,
+    },
+    textarea: checkTextaraField
+  };
+  const elements = getElements(options);
+  console.log('>', elements);
+
+  // TODO: Hasta aquí llega bien y hay que engancharlo con las reglas
+
+  // for (let i = 0; i < elements.length; i++) {
+  //   const element = elements[i];
+  //   console.log(field);
+  //   //rules[element.type](element, options);
+  // }
+}
+
+
+checkFields(fieldConfigOptions);
