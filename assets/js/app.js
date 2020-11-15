@@ -8,28 +8,29 @@ const fieldConfigOptions = {
   textarea: ['id', 'name', 'maxlength']
 }; 
 
-function checkFieldAttribute(field, attr) {
-  const check = !(!field.hasAttribute(attr) || field.getAttribute(attr) === '');
+function checkElementAttribute(element, attr) {
+  const check = !(!element.hasAttribute(attr) || element.getAttribute(attr) === '');
   
   console.log(attr, check);
   
-  !check && field.classList.add('check--error');
+  !check && element.classList.add('check--error');
 }
 
 function checkTextField(field, option) {
   const textOptions = option.text;
   for (let i=0; i<textOptions.length; i++) {
+    console.log("1", i);  
     const attr = textOptions[i];
-    checkFieldAttribute(field, attr);
+    checkElementAttribute(field, attr);
   }
 }
 
-function checkNumberField(options) {
-  console.log('2', options.number);
+function checkNumberField(element, option) {
+  console.log('2', option.number);
 }
 
-function checkTextaraField(options) {
-  console.log('3', options.textarea);
+function checkTextaraField(element, option) {
+  console.log('3', option);
 }
 
 
@@ -73,16 +74,27 @@ function checkFields(options) {
     textarea: checkTextaraField
   };
   const elements = getElements(options);
-  console.log('>', elements);
 
   // TODO: Hasta aquí llega bien y hay que engancharlo con las reglas
 
-  // for (let i = 0; i < elements.length; i++) {
-  //   const element = elements[i];
-  //   console.log(field);
-  //   //rules[element.type](element, options);
-  // }
+  for (let i = 0; i < elements.length; i++) {
+    const element = elements[i];
+    const tag = element.tagName.toLowerCase();
+    const isInput = (tag === 'input');
+    isInput ? rules.input[element.type](element, options.input) : rules[tag](element, options.textarea);
+  }
 }
 
 
 checkFields(fieldConfigOptions);
+
+
+/* 
+  TODO:
+  
+  - ids duplicados
+  - img sin alt
+  - label sin for
+  - input sin label
+
+*/
